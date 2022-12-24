@@ -5,9 +5,14 @@ class Directory:
         self.name = dirName
         self.elementsCount = 0
         self.fileList = []
+        self.deleted = False
 
     def __delete__(self):
-        return {'message': self.name +'directory deleted'}
+        if self.deleted is False:
+            self.deleted = True
+            return {'message': self.name +'directory deleted'}
+        else: 
+            return {'error': 'Directory is already deleted'}
 
     def __listElements__(self):
         answ = ''
@@ -34,4 +39,4 @@ class Directory:
         self.father = path
         self.father.fileList.append(self)
         self.father.elementsCount += 1 
-        return {'message': 'Directory moved successfully'}
+        return {'message': 'File/subdirectory moved successfully'}
