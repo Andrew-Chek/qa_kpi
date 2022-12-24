@@ -3,7 +3,6 @@ class BinaryFile:
         self.fileName = fileName
         self.content = content
         self.father = father
-        self.info = content
         self.deleted = False
 
     def __delete__(self):

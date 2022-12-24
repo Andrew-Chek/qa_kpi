@@ -4,9 +4,14 @@ class BufferFile:
         self.fileName = fileName
         self.father = father
         self.content = []
+        self.deleted = False
 
     def __delete__(self):
-        return {'message': self.fileName +'file deleted'}
+        if self.deleted is False:
+            self.deleted = True
+            return {'message': self.fileName +'file deleted'}
+        else: 
+            return {'error': 'File is already deleted'}
 
     def __move__(self, path):
         if (path.elementsCount >= path.DIR_MAX_ELEMS + 1):
@@ -26,6 +31,7 @@ class BufferFile:
             return {'error': 'Buffer is full'}
 
         self.content.append(elem)
+        return {'content': self.content}
 
     def __consume__(self):
         if len(self.content) >= 1:
