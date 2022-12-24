@@ -1,4 +1,5 @@
 from flask import Flask, request
+import json
 from flask_restful import Resource, Api
 from directory import Directory
 from binaryFile import BinaryFile
@@ -16,7 +17,7 @@ binary = BinaryFile(fileName, content, fatherDirectory)
 
 name = 'buffer file'
 size = 10
-buffer = BufferFile(name, content)
+buffer = BufferFile(name, size)
 
 maxElements = 10
 name = 'name1'
@@ -32,12 +33,12 @@ class BinaryApi(Resource):
         return self.binary.__read__()
     def post(self):
         data = request.get_json()
-        fatherDir = Directory(data.father)
-        self.binary = BinaryFile(data.fileName, data.content, fatherDir)
+        fatherDir = Directory(data["father"])
+        self.binary = BinaryFile(data["fileName"], data["content"], fatherDir)
         return {'message': 'BinaryFile is successfully created'}
     def put(self):
         data = request.get_json()
-        fatherDir = Directory(data.father)
+        fatherDir = Directory(data["father"])
         return self.binary.__move__(fatherDir)
     def delete(self):
         return self.binary.__delete__()
@@ -49,17 +50,16 @@ class BufferApi(Resource):
         return self.buffer.__consume__()
     def post(self):
         data = request.get_json()
-        fatherDir = Directory(data.father)
-        self.buffer = BufferFile(data.fileName, data.size, fatherDir)
+        fatherDir = Directory(data["father"])
+        self.buffer = BufferFile(data["fileName"], data["maxSize"], fatherDir)
         return {'message': 'BufferFile is successfully created'}
     def put(self):
         data = request.get_json()
-        fatherDir = Directory(data.father)
+        fatherDir = Directory(data["father"])
         return self.buffer.__move__(fatherDir)
     def patch(self):
-        data = request.get_json()
-        print(data)
-        return self.buffer.__push__(data.element)
+        data = json.loads(request.data)
+        return self.buffer.__push__(data["element"])
     def delete(self):
         return self.buffer.__delete__()
 
@@ -68,11 +68,11 @@ class DirectoryApi(Resource):
         self.directory = directory
     def post(self):
         data = request.get_json()
-        self.directory = Directory(data.name, data.maxElements)
+        self.directory = Directory(data["name"], data["maxElements"])
         return {'message': 'Directory is successfully created'}
     def put(self):
         data = request.get_json()
-        fatherDir = Directory(data.father)
+        fatherDir = Directory(data["father"])
         return self.directory.__move__(fatherDir)
     def delete(self):
         return self.directory.__delete__()
@@ -84,16 +84,16 @@ class logTextApi(Resource):
         return self.logText.__read__()
     def post(self):
         data = request.get_json()
-        fatherDir = Directory(data.father)
-        self.logText = LogTextFile(data.fileName, fatherDir)
+        fatherDir = Directory(data["father"])
+        self.logText = LogTextFile(data["fileName"], fatherDir)
         return {'message': 'LogTextFile is successfully created'}
     def put(self):
         data = request.get_json()
-        fatherDir = Directory(data.father)
+        fatherDir = Directory(data["father"])
         return self.logText.__move__(fatherDir)
     def patch(self):
         data = request.get_json()
-        return self.logText.__log__(data.line)
+        return self.logText.__log__(data["line"])
     def delete(self):
         return self.logText.__delete__()
 
