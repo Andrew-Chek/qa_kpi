@@ -40,7 +40,7 @@ def BinaryApi():
     elif(request.method == 'DELETE'):
         return binary.__delete__()
 
-@app.route('/bufferfile', methods = ['GET', 'POST', 'PUT', 'PATCH' 'DELETE'])
+@app.route('/bufferfile', methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
 def BufferApi():
     if(request.method == 'GET'):
         return buffer.__consume__()
@@ -59,44 +59,37 @@ def BufferApi():
     elif(request.method == 'DELETE'):
         return buffer.__delete__()
 
-class DirectoryApi(Resource):
-    def __init__(self):
-        self.directory = directory
-    def post(self):
+@app.route('/directory', methods = ['POST', 'PUT', 'DELETE'])
+def DirectoryApi():
+    if(request.method == 'POST'):
         data = request.get_json()
-        self.directory = Directory(data["name"], data["maxElements"])
+        directory = Directory(data["name"], data["maxElements"])
         return {'message': 'Directory is successfully created'}
-    def put(self):
+    elif(request.method == 'PUT'):
         data = request.get_json()
         fatherDir = Directory(data["father"])
-        return self.directory.__move__(fatherDir)
-    def delete(self):
-        return self.directory.__delete__()
+        return directory.__move__(fatherDir)
+    elif(request.method == 'DELETE'):
+        return directory.__delete__()
 
-class logTextApi(Resource):
-    def __init__(self):
-        self.logText = LogTextFile
-    def get(self):
-        return self.logText.__read__()
-    def post(self):
+@app.route('/logtext', methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
+def logTextApi():
+    if(request.method == 'GET'):
+        return logText.__read__()
+    if(request.method == 'POST'):
         data = request.get_json()
         fatherDir = Directory(data["father"])
-        self.logText = LogTextFile(data["fileName"], fatherDir)
+        logText = LogTextFile(data["fileName"], fatherDir)
         return {'message': 'LogTextFile is successfully created'}
-    def put(self):
+    if(request.method == 'PUT'):
         data = request.get_json()
         fatherDir = Directory(data["father"])
-        return self.logText.__move__(fatherDir)
-    def patch(self):
+        return logText.__move__(fatherDir)
+    if(request.method == 'PATCH'):
         data = request.get_json()
-        return self.logText.__log__(data["line"])
-    def delete(self):
-        return self.logText.__delete__()
-
-api.add_resource(BinaryApi, '/binaryfile')
-api.add_resource(BufferApi, '/bufferfile')
-api.add_resource(DirectoryApi, '/directory')
-api.add_resource(logTextApi, '/logtextfile')
+        return logText.__log__(data["line"])
+    if(request.method == 'DELETE'):
+        return logText.__delete__()
 
 if __name__ == '__main__':
     app.run(debug=True)
