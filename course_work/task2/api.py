@@ -71,27 +71,18 @@ log = LogTextFile(name, root)
 def BufferApi():
    buffer = BufferFile(name, size)
    if(request.method == 'GET'):
-      return jsonify(buffer.__consume__()), status
+      return buffer.__consume__()
    elif(request.method == 'POST'):
       fatherDir = Directory(request.args.get("father"), 15)
       buffer = BufferFile(request.args.get("fileName"), request.args.get("maxSize"), fatherDir)
       return jsonify({'message': 'BufferFile is successfully created'}), 200
    elif(request.method == 'PUT'):
-      fatherDir = Directory(request.args.get("father"))
-      status = 200
-      if(buffer.__move__()["error"] != ""):
-         status = 400
-      return jsonify(buffer.__move__(fatherDir)), status
+      fatherDir = Directory(request.args.get("father"), 15)
+      return buffer.__move__(fatherDir)
    elif(request.method == 'PATCH'):
-      status = 200
-      if(buffer.__push__()["error"] != ""):
-         status = 400
-      return jsonify(buffer.__push__(request.args.get("element"))), status
+      return buffer.__push__(request.args.get("element"))
    elif(request.method == 'DELETE'):
-      status = 200
-      if(buffer.__delete__()["error"] != ""):
-         status = 400
-      return jsonify(buffer.__delete__()), status
+      return buffer.__delete__()
 
 @app.route('/binaryfile', methods = ['GET', 'POST', 'PUT', 'DELETE'])
 def BinaryApi():

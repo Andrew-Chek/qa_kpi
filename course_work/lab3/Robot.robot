@@ -43,12 +43,12 @@ Binary file delete
     Should Contain    ${result.stdout}   Status code: 200
 
 Buffer file create
-    ${result} =    Run Process    python3   ${cli}    post    binaryfile    fileName\=bufferFile1    father\=newDir1    maxSize\=10
+    ${result} =    Run Process    python3   ${cli}    post    bufferfile    fileName\=bufferFile1    father\=newDir1    maxSize\=10
     Should Contain    ${result.stdout}   Status code: 200
 
 Buffer file read
-    ${result} =    Run Process    python3   ${cli}    get    binaryfile
-    Should Contain    ${result.stdout}   Status code: 200
+    ${result} =    Run Process    python3   ${cli}    get    bufferfile
+    Should Contain    ${result.stdout}   Status code: 400
 
 Buffer file delete
     ${result} =    Run Process    python3   ${cli}    delete    bufferfile
