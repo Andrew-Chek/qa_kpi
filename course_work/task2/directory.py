@@ -1,42 +1,40 @@
 class Directory:
-    def __init__(self, dirName, maxElements = 0, father = None):
-        self.DIR_MAX_ELEMS = maxElements
-        self.father = father
-        self.name = dirName
-        self.elementsCount = 0
-        self.fileList = []
-        self.deleted = False
+    def __init__(self, name, max_elems, parent = None):
+        if parent != None:
+            if (parent.count_elems >= parent.DIR_MAX_ELEMS ):
+                print('Parent directory is full.')
+                return
+            parent.count_elems += 1
+            parent.list.append(self)
+        self.parent = parent
+        self.name = name
+        self.DIR_MAX_ELEMS = max_elems
+        self.count_elems = 0
+        self.list = []
 
-    def __delete__(self):
-        if self.deleted is False:
-            self.deleted = True
-            return {'message': self.name +'directory deleted'}
-        else: 
-            return {'error': 'Directory is already deleted'}
+    def __delete__(self, instance):
+        print('Directory was deleted.')
+        return
 
-    def __listElements__(self):
-        answ = ''
-        for item in self.fileList:
+    def list_elems(self):
+        res = self.name + ': ( '
+        for item in self.list:
             if type(item) is Directory:
-                answ += '==='
-                answ += item.__listElements__()
-                answ += '==='
-
+                res += item.list_elems()
             else:
-                answ += item.name
-                answ += ', ' 
+                res += item.name
+                res += ', ' 
+        res += '), '
+        return res
 
-        return answ
-
-    def __move__(self, path):
-        if (path.elementsCount >= path.DIR_MAX_ELEMS + 1):
-            return {'error': 'Target directory is full'}
-
-        if self.father != None:
-            self.father.elementsCount -= 1
-            self.father.fileList.pop(self.father.fileList.index(self))
-
-        self.father = path
-        self.father.fileList.append(self)
-        self.father.elementsCount += 1 
-        return {'message': 'File/subdirectory moved successfully'}
+    def move(self, location):
+        if (location.count_elems >= location.DIR_MAX_ELEMS + self.count_elems + 1):
+            print('Directory is full. Can\'t move.')
+            return
+        if self.parent != None:
+            self.parent.count_elems -= self.count_elems + 1
+            index = self.parent.list.index(self)
+            self.parent.list.pop(index)
+        self.parent = location
+        self.parent.list.append(self)
+        self.parent.count_elems += self.count_elems + 1 
